@@ -287,8 +287,8 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
 
   <script>
     const USER = "ZaperMaster";
-    // Repos que no se muestran aunque sean públicos (por ejemplo, esta misma web)
-    const HIDDEN = ["web", `${USER.toLowerCase()}.github.io`];
+    // Repos que no se muestran aunque sean públicos (esta misma web y el README de perfil)
+    const HIDDEN = ["web", USER.toLowerCase(), `${USER.toLowerCase()}.github.io`];
 
     // Información extra de cada proyecto; los repos públicos nuevos aparecen solos con lo que diga GitHub
     const EXTRA = {
