@@ -3,177 +3,442 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WebAudit Sec</title>
-  <link rel="icon" type="image/png" href="/static/brand/logo-fuera.png">
-  <link rel="stylesheet" href="/static/css/styles.css">
+  <title>ZaperMaster // Proyectos</title>
+  <meta name="description" content="Portfolio de proyectos de ciberseguridad y desarrollo de ZaperMaster.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23050a0e'/><path d='M8 10l6 6-6 6M16 22h8' stroke='%2300ff9c' stroke-width='3' fill='none' stroke-linecap='round'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04080b;
+      --panel: rgba(8, 18, 22, .78);
+      --line: rgba(0, 255, 156, .18);
+      --green: #00ff9c;
+      --cyan: #00d9ff;
+      --red: #ff2e63;
+      --amber: #ffb000;
+      --text: #c8fbe4;
+      --muted: #5f8f7d;
+      --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--green); color: var(--bg); }
+
+    /* ---------- Fondo: lluvia de caracteres + rejilla + scanlines ---------- */
+    #matrix { position: fixed; inset: 0; z-index: -3; opacity: .35; }
+    .grid {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        linear-gradient(transparent 0 calc(100% - 1px), var(--line) 0) 0 0 / 100% 48px,
+        linear-gradient(90deg, transparent 0 calc(100% - 1px), var(--line) 0) 0 0 / 48px 100%;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 10%, transparent 75%);
+      animation: gridMove 18s linear infinite;
+    }
+    @keyframes gridMove { to { background-position: 0 48px, 48px 0; } }
+    .scanlines {
+      position: fixed; inset: 0; z-index: 50; pointer-events: none;
+      background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.18) 2px 4px);
+    }
+    .scanlines::after {
+      content: ""; position: absolute; left: 0; right: 0; height: 120px;
+      background: linear-gradient(transparent, rgba(0,255,156,.05), transparent);
+      animation: sweep 7s linear infinite;
+    }
+    @keyframes sweep { from { top: -120px; } to { top: 100%; } }
+
+    /* ---------- Barra superior ---------- */
+    nav {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 14px clamp(16px, 4vw, 48px);
+      background: rgba(4, 8, 11, .82);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .brand { color: var(--green); font-weight: 800; letter-spacing: .5px; text-decoration: none; }
+    .brand span { color: var(--muted); }
+    nav ul { display: flex; gap: clamp(12px, 3vw, 28px); list-style: none; }
+    nav a.link { color: var(--muted); text-decoration: none; transition: color .2s; }
+    nav a.link:hover { color: var(--green); }
+    nav a.link::before { content: "./"; color: var(--green); opacity: .6; }
+    .status { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: blink 1.6s infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+
+    /* ---------- Hero ---------- */
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+    header.hero { min-height: calc(100vh - 52px); display: grid; align-items: center; padding: 48px 0; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+    .tag { color: var(--cyan); font-size: 13px; letter-spacing: 3px; margin-bottom: 18px; }
+    .tag::before { content: "[ "; color: var(--muted); } .tag::after { content: " ]"; color: var(--muted); }
+    h1.glitch {
+      font-family: "Orbitron", var(--mono); font-weight: 900;
+      font-size: clamp(38px, 7vw, 84px); line-height: 1; letter-spacing: 2px;
+      color: #eafff5; position: relative; display: inline-block;
+      text-shadow: 0 0 18px rgba(0,255,156,.45);
+    }
+    h1.glitch::before, h1.glitch::after {
+      content: attr(data-text); position: absolute; inset: 0; overflow: hidden;
+    }
+    h1.glitch::before { color: var(--cyan); transform: translate(-3px, 0); clip-path: inset(0 0 60% 0); animation: glitchA 3.2s infinite steps(1); mix-blend-mode: screen; }
+    h1.glitch::after  { color: var(--red);  transform: translate(3px, 0);  clip-path: inset(55% 0 0 0); animation: glitchB 2.7s infinite steps(1); mix-blend-mode: screen; }
+    @keyframes glitchA { 0%,88%,100% { clip-path: inset(0 0 100% 0); } 90% { clip-path: inset(10% 0 55% 0); transform: translate(-5px,-2px); } 94% { clip-path: inset(40% 0 30% 0); transform: translate(4px,1px); } }
+    @keyframes glitchB { 0%,85%,100% { clip-path: inset(100% 0 0 0); } 87% { clip-path: inset(60% 0 10% 0); transform: translate(5px,2px); } 92% { clip-path: inset(20% 0 65% 0); transform: translate(-4px,0); } }
+    .role { margin-top: 20px; font-size: clamp(15px, 2vw, 19px); color: var(--green); min-height: 1.6em; }
+    .role .cursor { display: inline-block; width: .6em; background: var(--green); animation: blink 1s steps(1) infinite; }
+    .intro { margin-top: 18px; max-width: 520px; color: var(--muted); line-height: 1.7; font-size: 14px; }
+    .cta { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; }
+    .btn {
+      position: relative; display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 22px; font: 600 13px var(--mono); letter-spacing: 1px; text-decoration: none;
+      color: var(--bg); background: var(--green); border: 1px solid var(--green);
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+      transition: transform .2s, box-shadow .2s, background .2s, color .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(0,255,156,.55); }
+    .btn.ghost { background: transparent; color: var(--green); }
+    .btn.ghost:hover { background: rgba(0,255,156,.1); }
+
+    /* Terminal del hero */
+    .terminal {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+      box-shadow: 0 0 0 1px rgba(0,255,156,.05), 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(0,255,156,.08);
+      overflow: hidden; font-size: 13px;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float { 50% { transform: translateY(-10px); } }
+    .term-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    .term-bar i:nth-child(1) { background: var(--red); } .term-bar i:nth-child(2) { background: var(--amber); } .term-bar i:nth-child(3) { background: var(--green); }
+    .term-bar span { margin-left: auto; }
+    .term-body { padding: 18px; min-height: 290px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+    .p  { color: var(--green); } .c { color: var(--cyan); } .r { color: var(--red); } .a { color: var(--amber); } .m { color: var(--muted); }
+
+    /* ---------- Secciones ---------- */
+    section { padding: 90px 0; }
+    .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
+    .sec-head .num { color: var(--green); font-size: 14px; }
+    .sec-head h2 { font-family: "Orbitron", var(--mono); font-size: clamp(24px, 4vw, 36px); color: #eafff5; letter-spacing: 1px; }
+    .sec-head .rule { flex: 1; min-width: 60px; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+    .sec-head .meta { color: var(--muted); font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ---------- Tarjetas de proyecto ---------- */
+    .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+    .card {
+      position: relative; padding: 26px; background: var(--panel);
+      border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+      transform-style: preserve-3d; transition: border-color .3s, box-shadow .3s, transform .15s;
+      display: flex; flex-direction: column; gap: 14px; min-height: 300px;
+    }
+    .card::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), rgba(0,255,156,.13), transparent 40%);
+      opacity: 0; transition: opacity .3s;
+    }
+    .card:hover { border-color: rgba(0,255,156,.55); box-shadow: 0 0 40px rgba(0,255,156,.15); }
+    .card:hover::before { opacity: 1; }
+    .card .scan { position: absolute; left: 0; right: 0; top: -40%; height: 40%; background: linear-gradient(transparent, rgba(0,255,156,.08), transparent); pointer-events: none; }
+    .card:hover .scan { animation: cardScan 1.4s linear infinite; }
+    @keyframes cardScan { to { top: 100%; } }
+    .corner { position: absolute; width: 14px; height: 14px; border-color: var(--green); border-style: solid; opacity: .7; }
+    .corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+    .corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
+    .badge { padding: 3px 9px; border: 1px solid currentColor; border-radius: 4px; font-size: 11px; letter-spacing: 1px; }
+    .badge.sec { color: var(--red); } .badge.dev { color: var(--cyan); }
+    .card h3 { font-size: 22px; color: #eafff5; display: flex; align-items: center; gap: 10px; }
+    .card h3 .icon { color: var(--green); }
+    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; }
+    .features { list-style: none; display: grid; gap: 6px; font-size: 12.5px; }
+    .features li::before { content: "› "; color: var(--green); }
+    .langbar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(255,255,255,.05); }
+    .langbar span { height: 100%; transform-origin: left; transform: scaleX(0); transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+    .reveal.in .langbar span { transform: scaleX(1); }
+    .langs { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--muted); }
+    .langs b { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .card-foot { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); padding-top: 10px; border-top: 1px dashed var(--line); }
+    .card-foot .links { display: flex; gap: 14px; }
+    .card-foot a { color: var(--green); text-decoration: none; }
+    .card-foot a:hover { text-decoration: underline; text-shadow: 0 0 8px var(--green); }
+
+    /* ---------- Estadísticas ---------- */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; }
+    .stat { padding: 22px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+    .stat strong { display: block; font-family: "Orbitron", var(--mono); font-size: 34px; color: var(--green); text-shadow: 0 0 14px rgba(0,255,156,.5); }
+    .stat span { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+
+    /* ---------- Skills ---------- */
+    .skills { display: flex; flex-wrap: wrap; gap: 12px; }
+    .skill { padding: 9px 16px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: rgba(0,255,156,.03); transition: all .25s; }
+    .skill:hover { border-color: var(--green); color: var(--green); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,255,156,.15); }
+
+    footer { padding: 50px 0 60px; text-align: center; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); }
+    footer a { color: var(--green); text-decoration: none; }
+
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+      .term-body { min-height: 240px; font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      #matrix { display: none; }
+    }
+  </style>
 </head>
 <body>
-<!-- Bordes para redimensionar la ventana sin marco (solo en la app de escritorio) -->
-<div class="resize-handles" aria-hidden="true">
-  <div data-edge="top"></div><div data-edge="bottom"></div>
-  <div data-edge="left"></div><div data-edge="right"></div>
-  <div data-edge="top-left"></div><div data-edge="top-right"></div>
-  <div data-edge="bottom-left"></div><div data-edge="bottom-right"></div>
-</div>
+  <canvas id="matrix" aria-hidden="true"></canvas>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
 
-<!-- Barra de título: se arrastra para mover la ventana -->
-<header class="titlebar" id="titlebar">
-  <div class="brand">
-    <img class="logo-mark" src="/static/brand/logo-fuera.png" alt="" draggable="false">
-    <div>
-      <div class="logo">WebAudit <span>Sec</span></div>
-      <span class="brand-caption">WEB SECURITY AUDITOR</span>
-    </div>
-  </div>
-  <div class="titlebar-actions">
-    <button id="historyButton" class="toolbar-button" type="button"></button>
-    <button id="language" class="toolbar-button" type="button">EN / ES</button>
-    <div class="window-controls">
-      <button type="button" id="windowMinimize" aria-label="Minimizar">
-        <svg viewBox="0 0 10 10"><path d="M0 5h10"/></svg>
-      </button>
-      <button type="button" id="windowMaximize" aria-label="Maximizar">
-        <svg class="icon-maximize" viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg>
-        <svg class="icon-restore" viewBox="0 0 10 10"><rect x="0.5" y="2.5" width="7" height="7"/><path d="M2.5 2.5V0.5h7v7h-2"/></svg>
-      </button>
-      <button type="button" id="windowClose" class="close" aria-label="Cerrar">
-        <svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"/></svg>
-      </button>
-    </div>
-  </div>
-</header>
+  <nav>
+    <a class="brand" href="#">root@zapermaster<span>:~$</span></a>
+    <ul>
+      <li><a class="link" href="#proyectos">proyectos</a></li>
+      <li><a class="link" href="#stack">stack</a></li>
+      <li><a class="link" href="#contacto">contacto</a></li>
+    </ul>
+    <div class="status"><i class="dot"></i><span id="clock">ONLINE</span></div>
+  </nav>
 
-<div class="app-body">
-<main>
-  <!-- Formulario de análisis -->
-  <section class="panel">
-    <form id="scanForm">
-      <div class="url-field">
-        <label id="urlLabel" for="target"></label>
-        <input id="target" type="url" placeholder="https://example.com" required>
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="tag">ACCESS GRANTED</div>
+        <h1 class="glitch" data-text="ZAPERMASTER">ZAPERMASTER</h1>
+        <div class="role"><span id="typed"></span><span class="cursor">&nbsp;</span></div>
+        <p class="intro">
+          Desarrollo herramientas de seguridad y aplicaciones: auditoría web, análisis de cabeceras,
+          TLS y DNS, y software a medida. Aquí está todo lo que tengo publicado en abierto.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#proyectos">&gt; ver_proyectos</a>
+          <a class="btn ghost" href="https://github.com/ZaperMaster" target="_blank" rel="noopener">github.com/ZaperMaster</a>
+        </div>
       </div>
-      <fieldset class="crawl-options">
-        <legend id="crawlMode"></legend>
-        <label>
-          <input type="radio" name="crawl-mode" value="single" checked>
-          <span id="singlePage"></span>
-        </label>
-        <label>
-          <input type="radio" name="crawl-mode" value="multiple">
-          <span id="linkedPages"></span>
-        </label>
-      </fieldset>
-      <button class="primary" id="scanButton" type="submit"></button>
-      <button class="cancel" id="cancelButton" type="button" hidden></button>
-    </form>
-
-    <!-- Opciones: límites del rastreo -->
-    <div class="scan-options">
-      <span class="crawl-limits" id="crawlLimits">
-        <label for="maxPages" id="maxPagesLabel"></label>
-        <input type="number" id="maxPages" min="1" max="500" value="150">
-        <label for="maxMinutes" id="maxMinutesLabel"></label>
-        <input type="number" id="maxMinutes" min="1" max="15" value="5">
-      </span>
-    </div>
-
-    <!-- Progreso en vivo mientras se analiza -->
-    <div class="progress" id="progressPanel" hidden>
-      <div class="progress-head">
-        <strong id="progressText"></strong>
-        <span id="progressMeta"></span>
-      </div>
-      <div class="progress-bar"><div id="progressFill"></div></div>
-      <div class="progress-current" id="progressCurrent"></div>
-    </div>
-
-    <p id="notice"></p>
-  </section>
-
-  <!-- Resumen -->
-  <section class="stats stats-row">
-    <div class="stat"><span id="statusLabel"></span><strong id="statusValue">—</strong></div>
-    <div class="stat"><span id="httpLabel"></span><strong id="httpValue">—</strong></div>
-    <div class="stat"><span id="findingsLabel"></span><strong id="findingsValue">—</strong></div>
-  </section>
-
-  <section class="stats severities stats-row">
-    <div class="stat"><span id="highLabel"></span><strong id="highValue">—</strong></div>
-    <div class="stat"><span id="mediumLabel"></span><strong id="mediumValue">—</strong></div>
-    <div class="stat"><span id="lowLabel"></span><strong id="lowValue">—</strong></div>
-    <div class="stat"><span id="infoLabel"></span><strong id="infoValue">—</strong></div>
-  </section>
-
-  <!-- Todas las comprobaciones -->
-  <section class="panel">
-    <h2 id="checksTitle"></h2>
-    <p id="checksDescription"></p>
-    <div class="stats">
-      <div class="stat"><span id="checksPassLabel"></span><strong id="checksPass">—</strong></div>
-      <div class="stat"><span id="checksWarningLabel"></span><strong id="checksWarning">—</strong></div>
-      <div class="stat"><span id="checksUnknownLabel"></span><strong id="checksUnknown">—</strong></div>
-    </div>
-    <div id="checksList"></div>
-  </section>
-
-  <details class="methodology">
-    <summary id="severityDisclaimerLabel"></summary>
-    <p id="severityDisclaimer"></p>
-  </details>
-
-  <!-- Hallazgos por página -->
-  <section class="panel">
-    <div class="results-head">
-      <h2 id="resultsTitle"></h2>
-      <div class="export-actions" id="exportActions" hidden>
-        <button id="exportHtml" type="button"></button>
-        <button id="exportPdf" type="button"></button>
-        <button id="exportJson" type="button">JSON</button>
-        <button id="exportCsv" type="button">CSV</button>
+      <div class="terminal" aria-label="Terminal animada">
+        <div class="term-bar"><i></i><i></i><i></i><span>bash — recon.sh</span></div>
+        <div class="term-body" id="term"></div>
       </div>
     </div>
-    <p class="export-status" id="exportStatus"></p>
+  </header>
 
-    <!-- Filtros de hallazgos y comparación con el análisis anterior (findings.js) -->
-    <div class="findings-toolbar" id="findingsToolbar" hidden>
-      <div class="severity-filters" id="severityFilters"></div>
-      <input type="search" id="findingsSearch">
-      <label class="group-by">
-        <span id="groupByLabel"></span>
-        <select id="groupBy">
-          <option value="finding" id="groupByFinding"></option>
-          <option value="page" id="groupByPage"></option>
-        </select>
-      </label>
-    </div>
-    <div id="comparison"></div>
-    <div id="results">
-      <p id="empty"></p>
-    </div>
-  </section>
-</main>
-</div>
+  <main class="wrap">
+    <section id="proyectos">
+      <div class="sec-head reveal">
+        <span class="num">01.</span><h2>Proyectos</h2><span class="rule"></span>
+        <span class="meta" id="repoMeta">cargando repos…</span>
+      </div>
+      <div class="projects" id="projects"></div>
+    </section>
 
-<!-- Historial de análisis (panel lateral) -->
-<aside class="history" id="historyPanel" hidden>
-  <div class="history-head">
-    <strong id="historyTitle"></strong>
-    <button type="button" class="history-close" id="historyClose">
-      <svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"/></svg>
-    </button>
-  </div>
-  <div class="history-list" id="historyList"></div>
-</aside>
+    <section>
+      <div class="stats reveal" id="stats">
+        <div class="stat"><strong data-count="0" id="sRepos">0</strong><span>REPOS PÚBLICOS</span></div>
+        <div class="stat"><strong data-count="0" id="sStars">0</strong><span>ESTRELLAS</span></div>
+        <div class="stat"><strong data-count="0" id="sLangs">0</strong><span>LENGUAJES</span></div>      </div>
+    </section>
 
-<!-- Informe para imprimir a PDF: solo se ve con los estilos de impresión -->
-<div id="printReport"></div>
+    <section id="stack">
+      <div class="sec-head reveal"><span class="num">02.</span><h2>Stack</h2><span class="rule"></span></div>
+      <div class="skills reveal">
+        <span class="skill">Python</span><span class="skill">FastAPI</span><span class="skill">JavaScript</span>
+        <span class="skill">HTML / CSS</span><span class="skill">OWASP</span><span class="skill">TLS / PKI</span>
+        <span class="skill">DNS · SPF · DMARC</span><span class="skill">Reglas Sigma</span><span class="skill">Odoo</span>
+        <span class="skill">C# / Unity</span><span class="skill">Git</span><span class="skill">pytest</span>
+      </div>
+    </section>
 
-<script src="/static/js/i18n.js"></script>
-<script src="/static/js/i18n-scanner.js"></script>
-<script src="/static/js/window.js"></script>
-<script src="/static/js/app.js"></script>
-<script src="/static/js/findings.js"></script>
-<script src="/static/js/report.js"></script>
-<script src="/static/js/history.js"></script>
+    <section id="contacto">
+      <div class="sec-head reveal"><span class="num">03.</span><h2>Contacto</h2><span class="rule"></span></div>
+      <div class="terminal reveal" style="animation:none">
+        <div class="term-bar"><i></i><i></i><i></i><span>contact.sh</span></div>
+        <div class="term-body" style="min-height:0">
+<span class="p">$</span> whoami
+ZaperMaster
+<span class="p">$</span> cat ./contacto.txt
+github  → <a class="c" href="https://github.com/ZaperMaster" target="_blank" rel="noopener">github.com/ZaperMaster</a>
+estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
+<span class="p">$</span> <span class="cursor" style="display:inline-block;width:.6em;background:var(--green);animation:blink 1s steps(1) infinite">&nbsp;</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>// built by <a href="https://github.com/ZaperMaster">ZaperMaster</a> · alojado en GitHub Pages · <span id="year"></span></p>
+  </footer>
+
+  <script>
+    const USER = "ZaperMaster";
+    // Repos que no se muestran aunque sean públicos (por ejemplo, esta misma web)
+    const HIDDEN = ["web", `${USER.toLowerCase()}.github.io`];
+
+    // Información extra de cada proyecto; los repos públicos nuevos aparecen solos con lo que diga GitHub
+    const EXTRA = {
+      "WebAudit-Sec": {
+        type: "sec", icon: "⛨",
+        description: "Auditor de seguridad web: analiza una página o un sitio entero y explica cada hallazgo con su recomendación y su referencia OWASP. Versión web (FastAPI) y app de escritorio para Windows.",
+        features: ["Cabeceras: CSP, HSTS, CORS, Permissions-Policy…", "Cookies, TLS, certificados y revocación OCSP/CRL", "DNS y correo: SPF, DMARC, CAA", "Archivos expuestos (.git, .env, backups…)", "Informes en PDF, HTML, JSON o CSV"],
+        languages: { Python: 154028, JavaScript: 75607, CSS: 14486, HTML: 7067, Batchfile: 1134 }
+      },
+      "Libroman": {
+        type: "dev", icon: "▤",
+        description: "Módulos para Odoo que gestionan un catálogo de libros y sus reservas, con modelos, vistas, menús y permisos de acceso propios.",
+        features: ["Módulo libro: catálogo y modelo de datos", "Módulo reserva: préstamos y reservas", "Vistas XML y reglas de acceso"],
+        languages: { Python: 2684 }
+      }
+    };
+    const FALLBACK = [
+      { name: "WebAudit-Sec", html_url: `https://github.com/${USER}/WebAudit-Sec`, language: "Python", stargazers_count: 0, pushed_at: "2026-10-23T13:34:54Z", homepage: "" },
+      { name: "Libroman", html_url: `https://github.com/${USER}/Libroman`, language: "Python", stargazers_count: 1, pushed_at: "2026-06-17T15:44:19Z", homepage: "" }
+    ];
+    const COLORS = { Python: "#3572A5", JavaScript: "#f1e05a", CSS: "#663399", HTML: "#e34c26", "C#": "#178600", Batchfile: "#C1F12E", TypeScript: "#3178c6", Shell: "#89e051" };
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- Lluvia de caracteres ---------- */
+    (() => {
+      const c = document.getElementById("matrix"), ctx = c.getContext("2d");
+      const chars = "01アカサタナハマヤラワ<>/{}[]#$%&*ZAPERSEC";
+      let cols, drops, size = 16;
+      const resize = () => { c.width = innerWidth; c.height = innerHeight; cols = Math.ceil(c.width / size); drops = Array.from({ length: cols }, () => Math.random() * -50); };
+      resize(); addEventListener("resize", resize);
+      if (reduced) return;
+      setInterval(() => {
+        ctx.fillStyle = "rgba(4,8,11,.12)"; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.font = `${size}px JetBrains Mono, monospace`;
+        drops.forEach((y, i) => {
+          ctx.fillStyle = Math.random() > .975 ? "#eafff5" : "#00ff9c";
+          ctx.fillText(chars[Math.random() * chars.length | 0], i * size, y * size);
+          drops[i] = y * size > c.height && Math.random() > .975 ? 0 : y + 1;
+        });
+      }, 55);
+    })();
+
+    /* ---------- Texto que se escribe solo ---------- */
+    (() => {
+      const roles = ["Security Tools Developer", "Web Security Auditor", "Python · FastAPI · OWASP", "Blue Team en formación"];
+      const el = document.getElementById("typed");
+      let r = 0, i = 0, del = false;
+      const tick = () => {
+        const word = roles[r];
+        el.textContent = word.slice(0, i);
+        if (!del && i++ === word.length) { del = true; return setTimeout(tick, 1600); }
+        if (del && i-- === 0) { del = false; r = (r + 1) % roles.length; }
+        setTimeout(tick, del ? 35 : 70);
+      };
+      tick();
+    })();
+
+    /* ---------- Terminal del hero ---------- */
+    function runTerminal(repos) {
+      const term = document.getElementById("term");
+      const lines = [
+        `<span class="p">┌──(root㉿zapermaster)-[~]</span>`,
+        `<span class="p">└─$</span> ./recon.sh --target github.com/${USER}`,
+        `<span class="m">[*] Iniciando escaneo…</span>`,
+        `<span class="m">[*] Resolviendo api.github.com</span> <span class="p">OK</span>`,
+        `<span class="c">[+] Repos públicos encontrados: ${repos.length}</span>`,
+        ...repos.map(r => `    <span class="p">├─</span> ${r.name} <span class="m">(${r.language || "—"})</span>`),
+        `<span class="a">[!] Modo portfolio activado</span>`,
+        `<span class="p">[✓] Acceso concedido. Bienvenido.</span>`,
+      ];
+      if (reduced) { term.innerHTML = lines.join("\n"); return; }
+      let n = 0;
+      const next = () => { if (n < lines.length) { term.innerHTML += (n ? "\n" : "") + lines[n++]; setTimeout(next, 260 + Math.random() * 320); } };
+      next();
+    }
+
+    /* ---------- Tarjetas ---------- */
+    const fmtDate = s => new Date(s).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+    function card(repo, langs) {
+      const x = EXTRA[repo.name] || {};
+      const total = Object.values(langs).reduce((a, b) => a + b, 0) || 1;
+      const entries = Object.entries(langs).sort((a, b) => b[1] - a[1]);
+      const type = x.type || (/sec|audit|siem|hack|vuln|pentest/i.test(repo.name) ? "sec" : "dev");
+      const el = document.createElement("article");
+      el.className = "card reveal";
+      el.innerHTML = `
+        <i class="corner tl"></i><i class="corner br"></i><div class="scan"></div>
+        <div class="card-top"><span>~/repos/${repo.name.toLowerCase()}</span>
+          <span class="badge ${type}">${type === "sec" ? "SECURITY" : "DEV"}</span></div>
+        <h3><span class="icon">${x.icon || "❯"}</span>${repo.name}</h3>
+        <p>${x.description || repo.description || "Proyecto sin descripción todavía."}</p>
+        ${x.features ? `<ul class="features">${x.features.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}
+        ${entries.length ? `<div class="langbar">${entries.map(([l, v]) => `<span style="width:${v / total * 100}%;background:${COLORS[l] || "#00ff9c"}"></span>`).join("")}</div>
+        <div class="langs">${entries.map(([l, v]) => `<span><b style="background:${COLORS[l] || "#00ff9c"}"></b>${l} ${(v / total * 100).toFixed(1)}%</span>`).join("")}</div>` : ""}
+        <div class="card-foot">
+          <span>★ ${repo.stargazers_count} · act. ${fmtDate(repo.pushed_at)}</span>
+          <span class="links">${repo.homepage ? `<a href="${repo.homepage}" target="_blank" rel="noopener">demo ↗</a>` : ""}<a href="${repo.html_url}" target="_blank" rel="noopener">código ↗</a></span>
+        </div>`;
+      el.addEventListener("pointermove", e => {
+        const b = el.getBoundingClientRect(), px = (e.clientX - b.left) / b.width, py = (e.clientY - b.top) / b.height;
+        el.style.setProperty("--mx", px * 100 + "%"); el.style.setProperty("--my", py * 100 + "%");
+        if (!reduced) el.style.transform = `perspective(900px) rotateX(${(.5 - py) * 6}deg) rotateY(${(px - .5) * 6}deg)`;
+      });
+      el.addEventListener("pointerleave", () => el.style.transform = "");
+      return el;
+    }
+
+    /* ---------- Aparición al hacer scroll y contadores ---------- */
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      e.target.querySelectorAll("[data-count]").forEach(countUp);
+      io.unobserve(e.target);
+    }), { threshold: .15 });
+    function countUp(el) {
+      const to = +el.dataset.count, t0 = performance.now();
+      const step = t => { const k = Math.min((t - t0) / 1400, 1); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }
+
+    /* ---------- Carga de repos desde la API de GitHub ---------- */
+    async function load() {
+      let repos;
+      try {
+        const res = await fetch(`https://api.github.com/users/${USER}/repos?type=owner&sort=pushed&per_page=100`);
+        if (!res.ok) throw 0;
+        repos = (await res.json()).filter(r => !r.fork && !r.archived && !HIDDEN.includes(r.name.toLowerCase()));
+      } catch { repos = FALLBACK; }
+      if (!repos.length) repos = FALLBACK;
+
+      const langSets = await Promise.all(repos.map(async r => {
+        if (EXTRA[r.name]?.languages) return EXTRA[r.name].languages;
+        try { const res = await fetch(r.languages_url); if (res.ok) return await res.json(); } catch {}
+        return r.language ? { [r.language]: 1 } : {};
+      }));
+
+      const box = document.getElementById("projects");
+      repos.forEach((r, i) => { const el = card(r, langSets[i]); el.style.transitionDelay = i * 120 + "ms"; box.appendChild(el); io.observe(el); });
+      document.getElementById("repoMeta").textContent = `${repos.length} repos · sincronizado con GitHub`;
+
+      const langs = new Set(langSets.flatMap(Object.keys));
+      document.getElementById("sRepos").dataset.count = repos.length;
+      document.getElementById("sStars").dataset.count = repos.reduce((a, r) => a + r.stargazers_count, 0);
+      document.getElementById("sLangs").dataset.count = langs.size;
+      document.querySelectorAll(".reveal:not(.card)").forEach(el => io.observe(el));
+      runTerminal(repos);
+    }
+    load();
+
+    /* ---------- Reloj ---------- */
+    const clock = document.getElementById("clock");
+    setInterval(() => clock.textContent = "ONLINE · " + new Date().toLocaleTimeString("es-ES"), 1000);
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
