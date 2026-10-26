@@ -261,7 +261,7 @@
         <span class="skill">DNS · SPF · DMARC</span><span class="skill">Reglas Sigma</span><span class="skill">Odoo</span>
         <span class="skill">Java</span><span class="skill">Spring Boot</span><span class="skill">Spring Security</span>
         <span class="skill">Thymeleaf</span><span class="skill">MySQL</span>
-        <span class="skill">C# / Unity</span><span class="skill">Git</span><span class="skill">pytest</span>
+        <span class="skill">C# / Unity</span><span class="skill">Photon PUN</span><span class="skill">Git</span><span class="skill">pytest</span>
       </div>
     </section>
 
@@ -298,6 +298,12 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
         features: ["Cabeceras: CSP, HSTS, CORS, Permissions-Policy…", "Cookies, TLS, certificados y revocación OCSP/CRL", "DNS y correo: SPF, DMARC, CAA", "Archivos expuestos (.git, .env, backups…)", "Informes en PDF, HTML, JSON o CSV"],
         languages: { Python: 154028, JavaScript: 75607, CSS: 14486, HTML: 7067, Batchfile: 1134 }
       },
+      "Hexagonia": {
+        type: "dev", icon: "⬢",
+        description: "Juego multijugador en 3D hecho en equipo con Unity y Photon PUN 2: carreras de obstáculos online en las que los jugadores compiten por llegar a la meta de cada nivel.",
+        features: ["Multijugador online: salas automáticas de hasta 10 jugadores", "Niveles encadenados que se sincronizan para toda la sala", "Suelos que se rompen cada vez más rápido y lava", "Obstáculos y puertas giratorias", "Personajes animados con su nombre sobre la cabeza"],
+        languages: { "C#": 227654, ShaderLab: 80492, HLSL: 13994 }
+      },
       "GestionAulas": {
         type: "dev", icon: "▦",
         description: "Aplicación web para gestionar los edificios, plantas y aulas de un centro educativo y reservarlas para impartir cursos. Spring Boot, Spring Security, Thymeleaf y MySQL.",
@@ -312,11 +318,12 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
       }
     };
     const FALLBACK = [
+      { name: "Hexagonia", html_url: `https://github.com/${USER}/Hexagonia`, language: "C#", stargazers_count: 0, pushed_at: "2026-10-26T13:20:47Z", homepage: "" },
       { name: "GestionAulas", html_url: `https://github.com/${USER}/GestionAulas`, language: "HTML", stargazers_count: 0, pushed_at: "2026-10-26T10:58:24Z", homepage: "" },
       { name: "WebAudit-Sec", html_url: `https://github.com/${USER}/WebAudit-Sec`, language: "Python", stargazers_count: 0, pushed_at: "2026-10-23T13:34:54Z", homepage: "" },
       { name: "Libroman", html_url: `https://github.com/${USER}/Libroman`, language: "Python", stargazers_count: 1, pushed_at: "2026-10-26T09:46:56Z", homepage: "" }
     ];
-    const COLORS = { Python: "#3572A5", JavaScript: "#f1e05a", CSS: "#663399", HTML: "#e34c26", Java: "#b07219", "C#": "#178600", Batchfile: "#C1F12E", TypeScript: "#3178c6", Shell: "#89e051" };
+    const COLORS = { Python: "#3572A5", JavaScript: "#f1e05a", CSS: "#663399", HTML: "#e34c26", Java: "#b07219", "C#": "#178600", ShaderLab: "#222c37", HLSL: "#aace60", Batchfile: "#C1F12E", TypeScript: "#3178c6", Shell: "#89e051" };
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     /* ---------- Lluvia de caracteres ---------- */
