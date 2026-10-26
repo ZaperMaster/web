@@ -305,7 +305,7 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
         languages: { "C#": 227654, ShaderLab: 80492, HLSL: 13994 }
       },
       "GestionAulas": {
-        type: "dev", icon: "▦",
+        type: "dev", icon: "▦", language: "Java",
         description: "Aplicación web para gestionar los edificios, plantas y aulas de un centro educativo y reservarlas para impartir cursos. Spring Boot, Spring Security, Thymeleaf y MySQL.",
         features: ["Reserva guiada: edificio → planta → aula", "Panel de administración y validación de reservas", "Roles ADMIN/USER, BCrypt y protección CSRF", "Aulas con capacidad, tipo y equipamiento", "Modo claro/oscuro y diseño adaptado a móvil"],
         languages: { HTML: 94252, Java: 83968, CSS: 22610, JavaScript: 3090 }
@@ -369,7 +369,7 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
         `<span class="m">[*] Iniciando escaneo…</span>`,
         `<span class="m">[*] Resolviendo api.github.com</span> <span class="p">OK</span>`,
         `<span class="c">[+] Repos públicos encontrados: ${repos.length}</span>`,
-        ...repos.map(r => `    <span class="p">├─</span> ${r.name} <span class="m">(${r.language || "—"})</span>`),
+        ...repos.map(r => `    <span class="p">├─</span> ${r.name} <span class="m">(${EXTRA[r.name]?.language || r.language || "—"})</span>`),
         `<span class="a">[!] Modo portfolio activado</span>`,
         `<span class="p">[✓] Acceso concedido. Bienvenido.</span>`,
       ];
@@ -380,6 +380,8 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
     }
 
     /* ---------- Tarjetas ---------- */
+    // El enlace "demo" no se muestra si apunta a esta misma web
+    const isPortfolio = url => url.replace(/\/+$/, "").toLowerCase() === `https://${USER.toLowerCase()}.github.io/web`;
     const fmtDate = s => new Date(s).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
     function card(repo, langs) {
       const x = EXTRA[repo.name] || {};
@@ -399,7 +401,7 @@ estado  → <span class="p">abierto a colaborar en proyectos de seguridad</span>
         <div class="langs">${entries.map(([l, v]) => `<span><b style="background:${COLORS[l] || "#00ff9c"}"></b>${l} ${(v / total * 100).toFixed(1)}%</span>`).join("")}</div>` : ""}
         <div class="card-foot">
           <span>★ ${repo.stargazers_count} · act. ${fmtDate(repo.pushed_at)}</span>
-          <span class="links">${repo.homepage ? `<a href="${repo.homepage}" target="_blank" rel="noopener">demo ↗</a>` : ""}<a href="${repo.html_url}" target="_blank" rel="noopener">código ↗</a></span>
+          <span class="links">${repo.homepage && !isPortfolio(repo.homepage) ? `<a href="${repo.homepage}" target="_blank" rel="noopener">demo ↗</a>` : ""}<a href="${repo.html_url}" target="_blank" rel="noopener">código ↗</a></span>
         </div>`;
       el.addEventListener("pointermove", e => {
         const b = el.getBoundingClientRect(), px = (e.clientX - b.left) / b.width, py = (e.clientY - b.top) / b.height;
